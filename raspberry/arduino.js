@@ -7,13 +7,13 @@ var sensorArduino = null;
 var controlArduino = null;
 
 exports.init = () => {
-  if (aeroState.arduinoAvailable) {
+  if (config.arduinoAvailable) {
     var SerialPort = require("serialport");
     const Readline = require("@serialport/parser-readline");
     const parser = new Readline();
 
     arduino = new SerialPort(
-      aeroState.arduinoPath,
+      config.arduinoPath,
       {
         baudRate: 115200,
         parser1,
@@ -22,7 +22,7 @@ exports.init = () => {
         if (err) {
           console.log("Arduino error: ", err.message);
         } else {
-          console.log("Connected to Arduino at ", aeroState.arduinoPath);
+          console.log("Connected to Arduino at ", config.arduinoPath);
           setTimeout(() => {
             // sen config values to arduino
             //exports.sendStartupValuesToArduino(arduino);
@@ -48,7 +48,7 @@ exports.init = () => {
 
 /**
  * Send all values needed for startup to a specific arduino
- * Gets all values needed from the global 'aeroState' object
+ * Gets all values needed from the global 'config' object
  */
 exports.sendStartupValuesToArduino = (arduino) => {
   /*this.sendValueToArduino(arduino, "CWE", "waterEmptyDistance", 2);
@@ -59,7 +59,7 @@ exports.sendStartupValuesToArduino = (arduino) => {
     this.sendValueToArduino(arduino, "CSP", "mistingSchedulePauseTime", 4);
     this.sendValueToArduino(arduino, "SS", "arduinoSimulation");*/
   // if set to run on schedule from the start, send command to start schedule
-  /*if (aeroState.runState == "schedule") {
+  /*if (config.runState == "schedule") {
         arduino.write("<RG>");
     }*/
 };
@@ -68,7 +68,7 @@ exports.sendStartupValuesToArduino = (arduino) => {
  * Send a specific message & value to a specific arduino
  */
 exports.sendValueToArduino = (arduino, name, id, padding = 0) => {
-  arduino.write("<" + name + common.pad(aeroState[id], padding) + ">");
+  arduino.write("<" + name + common.pad(config[id], padding) + ">");
 };
 
 /**
@@ -93,8 +93,8 @@ extractArduinoData = (data) => {
     arduinoData.sensorsLastUpdated = Date.now();
     //console.log("updating sensors");
   }
-  aeroState.values = {
-    ...aeroState.values,
+  config.values = {
+    ...config.values,
     ...arduinoData,
   };
 
@@ -112,9 +112,9 @@ extractArduinoData = (data) => {
       };
 
       //console.log(valuePairs[i]);
-      let prev_value = aeroState.values ? aeroState.values[data_name] : "";
-      let prev_updated = aeroState.values
-        ? aeroState.values[data_name + "_last_changed"]
+      let prev_value = config.values ? config.values[data_name] : "";
+      let prev_updated = config.values
+        ? config.values[data_name + "_last_changed"]
         : "";
 
       // has data changed?
@@ -134,8 +134,8 @@ extractArduinoData = (data) => {
 
       //console.log({ state_update });
 
-      aeroState.values = {
-        ...aeroState.values,
+      config.values = {
+        ...config.values,
         ...state_update,
       };
     }

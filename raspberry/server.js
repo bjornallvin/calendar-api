@@ -1,5 +1,4 @@
 global.config = require("./config");
-console.log({ aeroState });
 
 const common = require("./common");
 const arduino = require("./arduino");
@@ -14,7 +13,7 @@ arduino.init();
 app.use(parser.urlencoded({ extended: false }));
 app.use(parser.json());
 app.use("/", router);
-app.listen(aeroState.port, function () {
+app.listen(config.port, function () {
   common.debug("listening on port " + config.port);
 });
 

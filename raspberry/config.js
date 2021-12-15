@@ -26,6 +26,7 @@ loadConfigFromFile = fileName => {
 //const savedConfig = loadConfigFromFile("/.config.json");
 
 const defaultConfig = require("./.config_default.js");
+console.log("defaultConfig: ", defaultConfig);
 var localConfig = {};
 try {
   localConfig = require("./.config_local.js");
@@ -33,4 +34,4 @@ try {
   console.log("No local config file found");
 }
 
-module.exports = { ...defaultConfig.config, ...localConfig.config };
+module.exports = { ...defaultConfig, ...localConfig.config };
