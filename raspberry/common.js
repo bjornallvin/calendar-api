@@ -1,5 +1,6 @@
 const moment = require("moment");
 const chalk = require("chalk");
+const arduino = require("./arduino")
 
 exports.debug = (...args) => {
   let now = moment();
@@ -18,29 +19,52 @@ exports.pad = (num, size) => {
 
 exports.handleApi = (req, res) => {
   const params = req.params[0].split("/");
+  console.log(params)
+
+
   if (params.length == 0 || params[0] == "") {
     res.json({
       error: "No endpoint in request",
     });
-  } else if (params[0] == "mail") {
-    if (params.length == 1 || params[1] == "") {
-      res.json({
-        error: "No mail method given",
-      });
-    } else if (params[1] == "test") {
-      mail.sendTestMail().then((info) => {
-        res.json({
-          message: "Test mail sent",
-          result: "ok",
-          info,
-        });
-      });
-    } else {
-      res.json({
-        error: "Unknown mail method",
-        endpoint: params[1],
-      });
+  } else if (params[0] == "calendar") {
+    
+    const cmd = params[1];
+
+    if (cmd == "set-slot") {
+      const slot = parseInt(params[2]);
+      const value = parseInt(params[3]);
+      board[slot] = value;
+      console.log(board)
+      arduino.sendBoardToArduino()
     }
+    
+    if (cmd == "toggle-slot") {
+      const slot = parseInt(params[2]);
+      board[slot] = board[slot] ? 0 : 1;
+      arduino.sendBoardToArduino()
+    }
+
+    
+    if (cmd == "set-animation") {
+      const value = params[2];
+      arduino.sendToArduino("<SA"+ value + ">")
+    }
+
+    if (cmd == "all-on") {
+      board = new Array(24).fill(1);
+      arduino.sendBoardToArduino()
+    }
+
+    if (cmd == "all-off") {
+      board = new Array(24).fill(0);
+      arduino.sendBoardToArduino()
+    }
+
+    res.json({
+      error: "No endpoint in request",
+    });
+
+  
   } else {
     res.json({
       error: "Unknown endpoint",

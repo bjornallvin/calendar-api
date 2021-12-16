@@ -3,8 +3,7 @@ const common = require("./common");
 var mockInterval = null;
 var mockData = null;
 
-var sensorArduino = null;
-var controlArduino = null;
+var arduino = null;
 
 exports.init = () => {
   if (config.arduinoAvailable) {
@@ -15,8 +14,8 @@ exports.init = () => {
     arduino = new SerialPort(
       config.arduinoPath,
       {
-        baudRate: 115200,
-        parser1,
+        baudRate: 9600,
+        parser,
       },
       function (err) {
         if (err) {
@@ -34,7 +33,7 @@ exports.init = () => {
     arduino.pipe(parser);
 
     parser.on("data", function (data) {
-      //console.log("incoming data from arduino1: " + data);
+      console.log("incoming data from arduino1: " + data);
       arduino_data = data.trim();
       extractArduinoData(arduino_data);
     });
@@ -67,14 +66,18 @@ exports.sendStartupValuesToArduino = (arduino) => {
 /**
  * Send a specific message & value to a specific arduino
  */
-exports.sendValueToArduino = (arduino, name, id, padding = 0) => {
-  arduino.write("<" + name + common.pad(config[id], padding) + ">");
+exports.sendBoardToArduino = (name, id, padding = 0) => {
+
+  values = board.join('');
+  console.log(values);
+  arduino.write("<SB" + values + ">");
 };
 
 /**
  * Sends data to both arduinos over serial connection
  */
 exports.sendToArduino = (data) => {
+  console.log("sending to arduino:", data)
   arduino.write(data);
 };
 

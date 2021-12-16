@@ -1,5 +1,5 @@
 global.config = require("./config");
-
+global.board = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 const common = require("./common");
 const arduino = require("./arduino");
 const express = require("express");
